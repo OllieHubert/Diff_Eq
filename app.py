@@ -8,7 +8,9 @@ import base64
 import sympy as sp
 from sympy import symbols, Function, dsolve, Eq, exp, sin, cos, simplify, latex
 
-app = Flask(__name__)
+app = Flask(__name__, 
+            template_folder='templates',
+            static_folder='static')
 
 @app.route('/')
 def index():
