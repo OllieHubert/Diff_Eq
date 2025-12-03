@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Home - ODE Methods{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>Methods for Solving Ordinary Differential Equations</h1>
+        <p class="hero-subtitle">Explore different techniques to solve ODEs with interactive examples and visualizations</p>
+    </div>
+</div>
+
+<div class="methods-grid">
+    <div class="method-card">
+        <h2>Separation of Variables</h2>
+        <p>A fundamental technique for solving first-order ODEs by separating the dependent and independent variables.</p>
+        <a href="/separation-of-variables" class="btn-primary">Learn More</a>
+    </div>
+    
+    <div class="method-card">
+        <h2>Undetermined Coefficients</h2>
+        <p>Method for finding particular solutions to linear nonhomogeneous ODEs with constant coefficients.</p>
+        <a href="/undetermined-coefficients" class="btn-primary">Learn More</a>
+    </div>
+    
+    <div class="method-card">
+        <h2>Integrating Factor</h2>
+        <p>Technique for solving first-order linear ODEs by multiplying through by an integrating factor.</p>
+        <a href="/integrating-factor" class="btn-primary">Learn More</a>
+    </div>
+    
+    <div class="method-card">
+        <h2>Characteristic Polynomials</h2>
+        <p>Method for solving linear homogeneous ODEs with constant coefficients using characteristic equations.</p>
+        <a href="/characteristic-polynomials" class="btn-primary">Learn More</a>
+    </div>
+    
+    <div class="method-card method-card-featured">
+        <h2>Phase Portraits</h2>
+        <p>Visualize the behavior of solutions to systems of ODEs with interactive phase portrait generation.</p>
+        <a href="/phase-portraits" class="btn-primary">Explore</a>
+    </div>
+</div>
+{% endblock %}
+

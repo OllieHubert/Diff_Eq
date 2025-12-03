@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Separation of Variables - ODE Methods{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Separation of Variables</h1>
+    <p class="page-description">A method for solving first-order ODEs by separating variables and integrating both sides.</p>
+</div>
+
+<div class="method-sections">
+    <section class="method-section">
+        <h2>Homogeneous Solutions</h2>
+        <div class="theory-box">
+            <h3>Theory</h3>
+            <p>A first-order ODE is separable if it can be written in the form:</p>
+            <div class="equation">$$\frac{dy}{dx} = f(x)g(y)$$</div>
+            <p>The solution is found by separating variables and integrating:</p>
+            <div class="equation">$$\int \frac{1}{g(y)} dy = \int f(x) dx$$</div>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 1: Basic Separation</h3>
+            <p><strong>Problem:</strong> Solve $\frac{dy}{dx} = xy$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Separate variables</p>
+                <div class="equation">$$\frac{1}{y} dy = x dx$$</div>
+                <p><strong>Step 2:</strong> Integrate both sides</p>
+                <div class="equation">$$\int \frac{1}{y} dy = \int x dx$$</div>
+                <div class="equation">$$\ln|y| = \frac{x^2}{2} + C$$</div>
+                <p><strong>Step 3:</strong> Solve for y</p>
+                <div class="equation">$$y = Ce^{\frac{x^2}{2}}$$</div>
+            </div>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 2: With Initial Condition</h3>
+            <p><strong>Problem:</strong> Solve $\frac{dy}{dx} = \frac{y}{x}$ with $y(1) = 2$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Separate variables</p>
+                <div class="equation">$$\frac{1}{y} dy = \frac{1}{x} dx$$</div>
+                <p><strong>Step 2:</strong> Integrate</p>
+                <div class="equation">$$\ln|y| = \ln|x| + C$$</div>
+                <p><strong>Step 3:</strong> Apply initial condition</p>
+                <div class="equation">$$\ln(2) = \ln(1) + C \Rightarrow C = \ln(2)$$</div>
+                <p><strong>Step 4:</strong> Final solution</p>
+                <div class="equation">$$y = 2x$$</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="method-section">
+        <h2>Nonhomogeneous Solutions</h2>
+        <div class="theory-box">
+            <h3>Theory</h3>
+            <p>For nonhomogeneous separable ODEs, the same technique applies. The general form is:</p>
+            <div class="equation">$$\frac{dy}{dx} = f(x)g(y) + h(x)$$</div>
+            <p>If the equation can be rearranged into separable form, we proceed similarly.</p>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 3: Nonhomogeneous Case</h3>
+            <p><strong>Problem:</strong> Solve $\frac{dy}{dx} = x(y+1)$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Separate variables</p>
+                <div class="equation">$$\frac{1}{y+1} dy = x dx$$</div>
+                <p><strong>Step 2:</strong> Integrate</p>
+                <div class="equation">$$\ln|y+1| = \frac{x^2}{2} + C$$</div>
+                <p><strong>Step 3:</strong> Solve for y</p>
+                <div class="equation">$$y = Ce^{\frac{x^2}{2}} - 1$$</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="interactive-section">
+        <h2>Try It Yourself</h2>
+        <div class="interactive-box">
+            <p>Enter a separable ODE in the form: dy/dx = f(x)*g(y)</p>
+            <form id="solve-form" class="solve-form">
+                <input type="hidden" name="method" value="separation">
+                <div class="form-group">
+                    <label for="ode-input">ODE:</label>
+                    <input type="text" id="ode-input" name="ode" placeholder="e.g., dy/dx = x*y" required>
+                </div>
+                <button type="submit" class="btn-primary">Solve</button>
+            </form>
+            <div id="solution-result" class="solution-result"></div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('solve-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const ode = formData.get('ode');
+    
+    const resultDiv = document.getElementById('solution-result');
+    resultDiv.innerHTML = '<p>Solving...</p>';
+    
+    try {
+        const response = await fetch('/api/solve-ode', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({method: 'separation', ode: ode})
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            resultDiv.innerHTML = `
+                <h4>Solution:</h4>
+                <div class="equation">$$${data.solution}$$</div>
+                <p><strong>Steps:</strong></p>
+                <ul>${data.steps.map(s => `<li>${s}</li>`).join('')}</ul>
+            `;
+        } else {
+            resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+    }
+    
+    MathJax.typesetPromise([resultDiv]);
+});
+</script>
+{% endblock %}
+

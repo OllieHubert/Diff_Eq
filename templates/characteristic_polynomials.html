@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Characteristic Polynomials - ODE Methods{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Characteristic Polynomials</h1>
+    <p class="page-description">Method for solving linear homogeneous ODEs with constant coefficients using characteristic equations.</p>
+</div>
+
+<div class="method-sections">
+    <section class="method-section">
+        <h2>Homogeneous Solutions</h2>
+        <div class="theory-box">
+            <h3>Theory</h3>
+            <p>For a linear homogeneous ODE with constant coefficients:</p>
+            <div class="equation">$$ay'' + by' + cy = 0$$</div>
+            <p>We assume a solution of the form $y = e^{rx}$ and substitute:</p>
+            <div class="equation">$$ar^2e^{rx} + bre^{rx} + ce^{rx} = 0$$</div>
+            <p>Dividing by $e^{rx}$ (never zero), we get the characteristic equation:</p>
+            <div class="equation">$$ar^2 + br + c = 0$$</div>
+            <p>The nature of the roots determines the form of the solution:</p>
+            <ul>
+                <li><strong>Real distinct roots</strong> $r_1, r_2$: $y = C_1e^{r_1x} + C_2e^{r_2x}$</li>
+                <li><strong>Repeated root</strong> $r$: $y = C_1e^{rx} + C_2xe^{rx}$</li>
+                <li><strong>Complex roots</strong> $\alpha \pm i\beta$: $y = e^{\alpha x}(C_1\cos(\beta x) + C_2\sin(\beta x))$</li>
+            </ul>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 1: Real Distinct Roots</h3>
+            <p><strong>Problem:</strong> Solve $y'' - 5y' + 6y = 0$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Characteristic equation</p>
+                <div class="equation">$$r^2 - 5r + 6 = 0$$</div>
+                <p><strong>Step 2:</strong> Factor</p>
+                <div class="equation">$$(r-2)(r-3) = 0 \Rightarrow r_1 = 2, r_2 = 3$$</div>
+                <p><strong>Step 3:</strong> General solution</p>
+                <div class="equation">$$y = C_1 e^{2x} + C_2 e^{3x}$$</div>
+            </div>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 2: Repeated Root</h3>
+            <p><strong>Problem:</strong> Solve $y'' - 4y' + 4y = 0$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Characteristic equation</p>
+                <div class="equation">$$r^2 - 4r + 4 = 0$$</div>
+                <p><strong>Step 2:</strong> Factor</p>
+                <div class="equation">$$(r-2)^2 = 0 \Rightarrow r = 2 \text{ (repeated)}$$</div>
+                <p><strong>Step 3:</strong> General solution</p>
+                <div class="equation">$$y = C_1 e^{2x} + C_2 x e^{2x}$$</div>
+            </div>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 3: Complex Roots</h3>
+            <p><strong>Problem:</strong> Solve $y'' + 4y' + 13y = 0$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Characteristic equation</p>
+                <div class="equation">$$r^2 + 4r + 13 = 0$$</div>
+                <p><strong>Step 2:</strong> Use quadratic formula</p>
+                <div class="equation">$$r = \frac{-4 \pm \sqrt{16-52}}{2} = \frac{-4 \pm \sqrt{-36}}{2} = -2 \pm 3i$$</div>
+                <p><strong>Step 3:</strong> General solution</p>
+                <div class="equation">$$y = e^{-2x}(C_1 \cos(3x) + C_2 \sin(3x))$$</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="method-section">
+        <h2>Nonhomogeneous Solutions</h2>
+        <div class="theory-box">
+            <h3>Theory</h3>
+            <p>For a nonhomogeneous ODE:</p>
+            <div class="equation">$$ay'' + by' + cy = f(x)$$</div>
+            <p>The general solution is $y = y_h + y_p$, where:</p>
+            <ul>
+                <li>$y_h$ is the homogeneous solution (found using characteristic polynomial)</li>
+                <li>$y_p$ is a particular solution (found using methods like undetermined coefficients or variation of parameters)</li>
+            </ul>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 4: Nonhomogeneous with Exponential</h3>
+            <p><strong>Problem:</strong> Solve $y'' - 5y' + 6y = e^x$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Homogeneous solution (from Example 1)</p>
+                <div class="equation">$$y_h = C_1 e^{2x} + C_2 e^{3x}$$</div>
+                <p><strong>Step 2:</strong> Find particular solution (using undetermined coefficients)</p>
+                <div class="equation">$$y_p = Ae^x$$</div>
+                <p>Substituting: $Ae^x - 5Ae^x + 6Ae^x = e^x$</p>
+                <div class="equation">$$2A = 1 \Rightarrow A = \frac{1}{2}$$</div>
+                <p><strong>Step 3:</strong> General solution</p>
+                <div class="equation">$$y = C_1 e^{2x} + C_2 e^{3x} + \frac{1}{2}e^x$$</div>
+            </div>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 5: Nonhomogeneous with Polynomial</h3>
+            <p><strong>Problem:</strong> Solve $y'' - 4y' + 4y = x$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Homogeneous solution (from Example 2)</p>
+                <div class="equation">$$y_h = C_1 e^{2x} + C_2 x e^{2x}$$</div>
+                <p><strong>Step 2:</strong> Particular solution</p>
+                <div class="equation">$$y_p = Ax + B$$</div>
+                <p>Substituting: $0 - 4A + 4(Ax + B) = x$</p>
+                <p>Solving: $4A = 1, -4A + 4B = 0 \Rightarrow A = \frac{1}{4}, B = \frac{1}{4}$</p>
+                <p><strong>Step 3:</strong> General solution</p>
+                <div class="equation">$$y = C_1 e^{2x} + C_2 x e^{2x} + \frac{1}{4}x + \frac{1}{4}$$</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="interactive-section">
+        <h2>Try It Yourself</h2>
+        <div class="interactive-box">
+            <p>Enter a linear ODE with constant coefficients</p>
+            <form id="solve-form" class="solve-form">
+                <input type="hidden" name="method" value="characteristic">
+                <div class="form-group">
+                    <label for="ode-input">ODE:</label>
+                    <input type="text" id="ode-input" name="ode" placeholder="e.g., y'' - 5y' + 6y = 0" required>
+                </div>
+                <button type="submit" class="btn-primary">Solve</button>
+            </form>
+            <div id="solution-result" class="solution-result"></div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('solve-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const ode = formData.get('ode');
+    
+    const resultDiv = document.getElementById('solution-result');
+    resultDiv.innerHTML = '<p>Solving...</p>';
+    
+    try {
+        const response = await fetch('/api/solve-ode', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({method: 'characteristic', ode: ode})
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            resultDiv.innerHTML = `
+                <h4>Solution:</h4>
+                <div class="equation">$$${data.solution}$$</div>
+                <p><strong>Steps:</strong></p>
+                <ul>${data.steps.map(s => `<li>${s}</li>`).join('')}</ul>
+            `;
+        } else {
+            resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+    }
+    
+    MathJax.typesetPromise([resultDiv]);
+});
+</script>
+{% endblock %}
+

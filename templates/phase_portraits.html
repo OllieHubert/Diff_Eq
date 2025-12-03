@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Phase Portraits - ODE Methods{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Phase Portraits</h1>
+    <p class="page-description">Visualize the behavior of solutions to systems of ODEs with interactive phase portrait generation.</p>
+</div>
+
+<div class="phase-portrait-content">
+    <section class="portrait-types-section">
+        <h2>Types of Phase Portraits</h2>
+        
+        <div class="portrait-type-grid">
+            <div class="portrait-type-card">
+                <h3>Saddle Point</h3>
+                <p>A saddle point has one stable and one unstable direction. The system has eigenvalues of opposite signs.</p>
+                <p><strong>Example:</strong> $\frac{dx}{dt} = x$, $\frac{dy}{dt} = -y$</p>
+                <button class="btn-secondary" onclick="generatePortrait('saddle')">Generate Saddle</button>
+            </div>
+            
+            <div class="portrait-type-card">
+                <h3>Nodal Sink</h3>
+                <p>All trajectories approach the equilibrium point. Both eigenvalues are real and negative.</p>
+                <p><strong>Example:</strong> $\frac{dx}{dt} = -x$, $\frac{dy}{dt} = -y$</p>
+                <button class="btn-secondary" onclick="generatePortrait('nodal_sink')">Generate Nodal Sink</button>
+            </div>
+            
+            <div class="portrait-type-card">
+                <h3>Spiral Sink</h3>
+                <p>Trajectories spiral inward toward the equilibrium. Complex eigenvalues with negative real part.</p>
+                <p><strong>Example:</strong> $\frac{dx}{dt} = -x - y$, $\frac{dy}{dt} = x - y$</p>
+                <button class="btn-secondary" onclick="generatePortrait('spiral')">Generate Spiral</button>
+            </div>
+            
+            <div class="portrait-type-card">
+                <h3>Center (Circular Orbits)</h3>
+                <p>Trajectories form closed orbits around the equilibrium. Purely imaginary eigenvalues.</p>
+                <p><strong>Example:</strong> $\frac{dx}{dt} = y$, $\frac{dy}{dt} = -x$</p>
+                <button class="btn-secondary" onclick="generatePortrait('center')">Generate Center</button>
+            </div>
+        </div>
+    </section>
+    
+    <section class="interactive-portrait-section">
+        <h2>Create Custom Phase Portrait</h2>
+        <div class="interactive-box">
+            <p>Enter your system of ODEs. Use Python/numpy syntax (e.g., use ** for exponentiation, np.sin, np.cos, etc.)</p>
+            <form id="portrait-form" class="portrait-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dx-dt">dx/dt:</label>
+                        <input type="text" id="dx-dt" name="dx_dt" value="y" placeholder="e.g., y or -x - y">
+                    </div>
+                    <div class="form-group">
+                        <label for="dy-dt">dy/dt:</label>
+                        <input type="text" id="dy-dt" name="dy_dt" value="-x" placeholder="e.g., -x or x - y">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="x-min">x range (min):</label>
+                        <input type="number" id="x-min" name="x_min" value="-5" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="x-max">x range (max):</label>
+                        <input type="number" id="x-max" name="x_max" value="5" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="y-min">y range (min):</label>
+                        <input type="number" id="y-min" name="y_min" value="-5" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="y-max">y range (max):</label>
+                        <input type="number" id="y-max" name="y_max" value="5" step="0.5">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Generate Phase Portrait</button>
+            </form>
+            <div id="portrait-result" class="portrait-result">
+                <p class="info-text">Select a preset type above or enter your own system and click "Generate Phase Portrait"</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function generatePortrait(type) {
+    const resultDiv = document.getElementById('portrait-result');
+    resultDiv.innerHTML = '<p>Generating phase portrait...</p>';
+    
+    try {
+        const response = await fetch('/api/phase-portrait', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                type: type,
+                x_range: [-5, 5],
+                y_range: [-5, 5]
+            })
+        });
+        
+        const data = await response.json();
+        if (data.image) {
+            resultDiv.innerHTML = `<img src="data:image/png;base64,${data.image}" alt="Phase Portrait" class="portrait-image">`;
+        } else {
+            resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+    }
+}
+
+document.getElementById('portrait-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    
+    const resultDiv = document.getElementById('portrait-result');
+    resultDiv.innerHTML = '<p>Generating phase portrait...</p>';
+    
+    try {
+        const response = await fetch('/api/phase-portrait', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                type: 'custom',
+                dx_dt: formData.get('dx_dt'),
+                dy_dt: formData.get('dy_dt'),
+                x_range: [parseFloat(formData.get('x_min')), parseFloat(formData.get('x_max'))],
+                y_range: [parseFloat(formData.get('y_min')), parseFloat(formData.get('y_max'))]
+            })
+        });
+        
+        const data = await response.json();
+        if (data.image) {
+            resultDiv.innerHTML = `<img src="data:image/png;base64,${data.image}" alt="Phase Portrait" class="portrait-image">`;
+        } else {
+            resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+    }
+});
+</script>
+{% endblock %}
+

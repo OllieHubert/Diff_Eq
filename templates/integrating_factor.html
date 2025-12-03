@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Integrating Factor - ODE Methods{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Integrating Factor</h1>
+    <p class="page-description">A technique for solving first-order linear ODEs by multiplying through by an integrating factor.</p>
+</div>
+
+<div class="method-sections">
+    <section class="method-section">
+        <h2>Homogeneous Solutions</h2>
+        <div class="theory-box">
+            <h3>Theory</h3>
+            <p>For a homogeneous first-order linear ODE:</p>
+            <div class="equation">$$\frac{dy}{dx} + P(x)y = 0$$</div>
+            <p>This is separable and can be solved directly:</p>
+            <div class="equation">$$\frac{1}{y} dy = -P(x) dx$$</div>
+            <div class="equation">$$y = Ce^{-\int P(x) dx}$$</div>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 1: Basic Homogeneous Case</h3>
+            <p><strong>Problem:</strong> Solve $\frac{dy}{dx} + 2xy = 0$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Separate variables</p>
+                <div class="equation">$$\frac{1}{y} dy = -2x dx$$</div>
+                <p><strong>Step 2:</strong> Integrate</p>
+                <div class="equation">$$\ln|y| = -x^2 + C$$</div>
+                <p><strong>Step 3:</strong> Solve for y</p>
+                <div class="equation">$$y = Ce^{-x^2}$$</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="method-section">
+        <h2>Nonhomogeneous Solutions</h2>
+        <div class="theory-box">
+            <h3>Theory</h3>
+            <p>For a nonhomogeneous first-order linear ODE:</p>
+            <div class="equation">$$\frac{dy}{dx} + P(x)y = Q(x)$$</div>
+            <p>The integrating factor is:</p>
+            <div class="equation">$$\mu(x) = e^{\int P(x) dx}$$</div>
+            <p>Multiplying through by $\mu(x)$:</p>
+            <div class="equation">$$\mu(x)\frac{dy}{dx} + \mu(x)P(x)y = \mu(x)Q(x)$$</div>
+            <p>The left side becomes the derivative of $\mu(x)y$:</p>
+            <div class="equation">$$\frac{d}{dx}[\mu(x)y] = \mu(x)Q(x)$$</div>
+            <p>Integrating both sides:</p>
+            <div class="equation">$$y = \frac{1}{\mu(x)}\int \mu(x)Q(x) dx$$</div>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 2: Basic Nonhomogeneous</h3>
+            <p><strong>Problem:</strong> Solve $\frac{dy}{dx} + 2xy = x$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Identify $P(x) = 2x$ and $Q(x) = x$</p>
+                <p><strong>Step 2:</strong> Find integrating factor</p>
+                <div class="equation">$$\mu(x) = e^{\int 2x dx} = e^{x^2}$$</div>
+                <p><strong>Step 3:</strong> Multiply through</p>
+                <div class="equation">$$e^{x^2}\frac{dy}{dx} + 2xe^{x^2}y = xe^{x^2}$$</div>
+                <p><strong>Step 4:</strong> Recognize left side as derivative</p>
+                <div class="equation">$$\frac{d}{dx}[e^{x^2}y] = xe^{x^2}$$</div>
+                <p><strong>Step 5:</strong> Integrate</p>
+                <div class="equation">$$e^{x^2}y = \int xe^{x^2} dx = \frac{1}{2}e^{x^2} + C$$</div>
+                <p><strong>Step 6:</strong> Solve for y</p>
+                <div class="equation">$$y = \frac{1}{2} + Ce^{-x^2}$$</div>
+            </div>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 3: With Initial Condition</h3>
+            <p><strong>Problem:</strong> Solve $\frac{dy}{dx} + y = e^x$ with $y(0) = 1$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> $P(x) = 1$, $Q(x) = e^x$</p>
+                <p><strong>Step 2:</strong> Integrating factor</p>
+                <div class="equation">$$\mu(x) = e^{\int 1 dx} = e^x$$</div>
+                <p><strong>Step 3:</strong> Multiply and integrate</p>
+                <div class="equation">$$\frac{d}{dx}[e^x y] = e^{2x}$$</div>
+                <div class="equation">$$e^x y = \frac{1}{2}e^{2x} + C$$</div>
+                <p><strong>Step 4:</strong> Apply initial condition</p>
+                <div class="equation">$$1 = \frac{1}{2} + C \Rightarrow C = \frac{1}{2}$$</div>
+                <p><strong>Step 5:</strong> Final solution</p>
+                <div class="equation">$$y = \frac{1}{2}e^x + \frac{1}{2}e^{-x} = \cosh(x)$$</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="interactive-section">
+        <h2>Try It Yourself</h2>
+        <div class="interactive-box">
+            <p>Enter a first-order linear ODE in the form: dy/dx + P(x)y = Q(x)</p>
+            <form id="solve-form" class="solve-form">
+                <input type="hidden" name="method" value="integrating_factor">
+                <div class="form-group">
+                    <label for="ode-input">ODE:</label>
+                    <input type="text" id="ode-input" name="ode" placeholder="e.g., dy/dx + 2xy = x" required>
+                </div>
+                <button type="submit" class="btn-primary">Solve</button>
+            </form>
+            <div id="solution-result" class="solution-result"></div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('solve-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const ode = formData.get('ode');
+    
+    const resultDiv = document.getElementById('solution-result');
+    resultDiv.innerHTML = '<p>Solving...</p>';
+    
+    try {
+        const response = await fetch('/api/solve-ode', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({method: 'integrating_factor', ode: ode})
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            resultDiv.innerHTML = `
+                <h4>Solution:</h4>
+                <div class="equation">$$${data.solution}$$</div>
+                <p><strong>Steps:</strong></p>
+                <ul>${data.steps.map(s => `<li>${s}</li>`).join('')}</ul>
+            `;
+        } else {
+            resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+    }
+    
+    MathJax.typesetPromise([resultDiv]);
+});
+</script>
+{% endblock %}
+

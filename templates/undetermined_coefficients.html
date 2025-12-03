@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Undetermined Coefficients - ODE Methods{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Undetermined Coefficients</h1>
+    <p class="page-description">A method for finding particular solutions to linear nonhomogeneous ODEs with constant coefficients.</p>
+</div>
+
+<div class="method-sections">
+    <section class="method-section">
+        <h2>Homogeneous Solutions</h2>
+        <div class="theory-box">
+            <h3>Theory</h3>
+            <p>For a linear homogeneous ODE with constant coefficients:</p>
+            <div class="equation">$$ay'' + by' + cy = 0$$</div>
+            <p>The characteristic equation is:</p>
+            <div class="equation">$$ar^2 + br + c = 0$$</div>
+            <p>The general solution depends on the roots of the characteristic equation.</p>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 1: Real Distinct Roots</h3>
+            <p><strong>Problem:</strong> Solve $y'' - 3y' + 2y = 0$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Characteristic equation</p>
+                <div class="equation">$$r^2 - 3r + 2 = 0$$</div>
+                <p><strong>Step 2:</strong> Factor</p>
+                <div class="equation">$$(r-1)(r-2) = 0 \Rightarrow r_1 = 1, r_2 = 2$$</div>
+                <p><strong>Step 3:</strong> General solution</p>
+                <div class="equation">$$y_h = C_1 e^x + C_2 e^{2x}$$</div>
+            </div>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 2: Complex Roots</h3>
+            <p><strong>Problem:</strong> Solve $y'' + 4y = 0$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Characteristic equation</p>
+                <div class="equation">$$r^2 + 4 = 0 \Rightarrow r = \pm 2i$$</div>
+                <p><strong>Step 2:</strong> General solution</p>
+                <div class="equation">$$y_h = C_1 \cos(2x) + C_2 \sin(2x)$$</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="method-section">
+        <h2>Nonhomogeneous Solutions</h2>
+        <div class="theory-box">
+            <h3>Theory</h3>
+            <p>For a nonhomogeneous ODE:</p>
+            <div class="equation">$$ay'' + by' + cy = f(x)$$</div>
+            <p>The general solution is $y = y_h + y_p$, where:</p>
+            <ul>
+                <li>$y_h$ is the homogeneous solution</li>
+                <li>$y_p$ is a particular solution found by guessing a form based on $f(x)$</li>
+            </ul>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 3: Polynomial Forcing</h3>
+            <p><strong>Problem:</strong> Solve $y'' - 3y' + 2y = x^2$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Homogeneous solution (from Example 1)</p>
+                <div class="equation">$$y_h = C_1 e^x + C_2 e^{2x}$$</div>
+                <p><strong>Step 2:</strong> Guess particular solution</p>
+                <div class="equation">$$y_p = Ax^2 + Bx + C$$</div>
+                <p><strong>Step 3:</strong> Substitute and solve for coefficients</p>
+                <div class="equation">$$y_p' = 2Ax + B, \quad y_p'' = 2A$$</div>
+                <div class="equation">$$2A - 3(2Ax + B) + 2(Ax^2 + Bx + C) = x^2$$</div>
+                <p>Solving: $A = \frac{1}{2}, B = \frac{3}{2}, C = \frac{7}{4}$</p>
+                <p><strong>Step 4:</strong> General solution</p>
+                <div class="equation">$$y = C_1 e^x + C_2 e^{2x} + \frac{1}{2}x^2 + \frac{3}{2}x + \frac{7}{4}$$</div>
+            </div>
+        </div>
+        
+        <div class="example-box">
+            <h3>Example 4: Exponential Forcing</h3>
+            <p><strong>Problem:</strong> Solve $y'' - 3y' + 2y = e^{3x}$</p>
+            <div class="solution-steps">
+                <p><strong>Step 1:</strong> Homogeneous solution</p>
+                <div class="equation">$$y_h = C_1 e^x + C_2 e^{2x}$$</div>
+                <p><strong>Step 2:</strong> Guess particular solution</p>
+                <div class="equation">$$y_p = Ae^{3x}$$</div>
+                <p><strong>Step 3:</strong> Substitute</p>
+                <div class="equation">$$9Ae^{3x} - 9Ae^{3x} + 2Ae^{3x} = e^{3x}$$</div>
+                <div class="equation">$$2A = 1 \Rightarrow A = \frac{1}{2}$$</div>
+                <p><strong>Step 4:</strong> General solution</p>
+                <div class="equation">$$y = C_1 e^x + C_2 e^{2x} + \frac{1}{2}e^{3x}$$</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="interactive-section">
+        <h2>Try It Yourself</h2>
+        <div class="interactive-box">
+            <p>Enter a linear ODE with constant coefficients</p>
+            <form id="solve-form" class="solve-form">
+                <input type="hidden" name="method" value="undetermined">
+                <div class="form-group">
+                    <label for="ode-input">ODE:</label>
+                    <input type="text" id="ode-input" name="ode" placeholder="e.g., y'' - 3y' + 2y = x^2" required>
+                </div>
+                <button type="submit" class="btn-primary">Solve</button>
+            </form>
+            <div id="solution-result" class="solution-result"></div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('solve-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const ode = formData.get('ode');
+    
+    const resultDiv = document.getElementById('solution-result');
+    resultDiv.innerHTML = '<p>Solving...</p>';
+    
+    try {
+        const response = await fetch('/api/solve-ode', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({method: 'undetermined', ode: ode})
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            resultDiv.innerHTML = `
+                <h4>Solution:</h4>
+                <div class="equation">$$${data.solution}$$</div>
+                <p><strong>Steps:</strong></p>
+                <ul>${data.steps.map(s => `<li>${s}</li>`).join('')}</ul>
+            `;
+        } else {
+            resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+    }
+    
+    MathJax.typesetPromise([resultDiv]);
+});
+</script>
+{% endblock %}
+
